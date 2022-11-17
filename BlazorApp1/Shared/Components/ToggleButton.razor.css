@@ -1,0 +1,30 @@
+﻿input{
+    position:relative;
+    top: 1px;
+
+    height:15px;
+    width:30px;
+    -webkit-appearance:none;
+    background: lightgrey;
+    outline: green;
+    border-radius: 10px;
+}
+
+input::before{
+    cursor:pointer;
+    content:'';
+    position:absolute;
+    top: 0px;
+    left:0px;
+    width:15px;
+    height:15px;
+    transform:scale(0.8);
+    border-radius:50%;
+    background:grey;
+    transition:0.5s;
+}
+
+    input:checked:before {
+        left: 40px;
+        background: lightgreen;
+    }

@@ -1,0 +1,19 @@
+﻿@page "/"
+@namespace BlazorApp1.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<div id="components-reconnect-modal"></div> 
+
+<app>
+    @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+</app>
+
+<!-- <component type="typeof(App)" render-mode="ServerPrerendered" />
+    -->
+<script src="lib/Chart.js/chart.js"></script>
+<script src="~/MyChart.js"></script>
+<script src="~/Hus.js"></script>
+<link rel="stylesheet" href="EditorSyle.css">

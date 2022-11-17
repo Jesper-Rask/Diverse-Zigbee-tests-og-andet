@@ -1,0 +1,53 @@
+﻿@page "/editor"
+@inject IJSRuntime JSRuntime
+@using Microsoft.AspNetCore.Components.Web;
+
+<h3>Editor     @posX</h3>
+<body>
+<div class="overblik">
+    <img class="overblik" src="53004-parrot.jpg" ondragover="@AllowDrop" ondrop="@OnDrop" />
+</div>
+<div class="items" draggable="true">
+    <img src="Pictures/idea-bulb.png" draggable="true"/><br />
+    <img src="Pictures/idea-bulb.png"  /><br />
+    <img src="Pictures/idea-bulb.png" /><br />
+    <img src="Pictures/idea-bulb.png" /><br />
+    <img src="Pictures/idea-bulb.png" onclick="@Button_Clicked" /><br />
+</div>
+    <style> .item2{position:fixed; top:@posY; left:@posX;}</style> 
+    
+    <img class="item2" draggable="true"  src="Pictures/idea-bulb.png" width="30" /><br />
+</body>
+
+
+
+@code {
+    double posX;
+    double posY;
+    public void Button_Clicked(MouseEventArgs e)
+    {
+        posX = e.ClientX;
+
+    }
+    public void Move(MouseEventArgs e)
+    {
+        posX = e.ClientX;
+        posY = e.ClientY;
+    }
+
+    public void AllowDrop(DragEventArgs e)
+    {
+        e.DataTransfer.DropEffect = "copy";
+
+            posX = e.ClientX;
+            posY = e.ClientY;
+            StateHasChanged();
+    }
+
+    public void OnDrop(DragEventArgs e)
+    {
+            posX = e.ClientX;
+            posY = e.ClientY;       
+    }
+
+}

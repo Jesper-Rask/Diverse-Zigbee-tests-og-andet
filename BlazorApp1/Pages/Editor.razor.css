@@ -1,0 +1,21 @@
+﻿.items img {
+    position: relative;
+    background: lightgrey;
+    line-height: 45px;
+    text-align: center;
+    height: 35px;
+    width: 35px;
+    padding: 5px, 5px, 5px, 5px;
+    border-radius: 3px;
+}
+
+
+
+.overblik {
+    position: absolute;
+    left: 200px;
+    top: 70px;
+    height: 600px;
+    width:600px;
+}
+

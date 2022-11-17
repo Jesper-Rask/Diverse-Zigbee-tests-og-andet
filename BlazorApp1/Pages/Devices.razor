@@ -1,0 +1,66 @@
+﻿@page "/Devices"
+
+@using ZigbeeModels
+
+<h1>Devices</h1>
+<h4>Registrerede devices</h4>
+<div class="position-absolute">
+</div>
+
+<style>
+div.position-absolute {
+  position: absolute;
+  top: 0;
+  right: 1200px;
+  width: 300px;
+  border: 3px solid #73AD21;
+}
+</style>
+
+
+@if (Data.bridgeDevices == null)
+{
+    <p>Ingen enheder fundet</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Adresse</th>
+                <th>Friendly Name</th>
+                <th>Edit</th>
+                <th>Model ID</th>
+                <th>Beskrivelse</th>
+                <th>Model</th>
+                <th>Leverandør</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach(BridgeDevice dev in Data.bridgeDevices)
+            {
+                <tr>
+                    <td>@dev.ieee_address</td>
+                    <td><input @bind="dev.friendly_name" disabled="@(!enableEdit)"></td>
+                    <th><buttton style="background:grey">Edit </buttton></th>
+                    <td>@dev.model_id</td>
+                    @if (dev.definition !=null){
+                    <td>@dev.definition.description</td>
+                    <td>@dev.definition.model</td>
+                    <td>@dev.definition.vendor</td>                  
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    bool enableEdit;
+    private void DisableEdit(bool edit)
+    {
+        edit = false;
+    }
+}

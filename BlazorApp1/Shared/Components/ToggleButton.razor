@@ -1,0 +1,20 @@
+﻿<input type="checkbox" @bind="Status"/>
+@code {
+    [Parameter]
+    public EventCallback<bool> StatusChanged { get; set; }
+
+    private bool _status;
+
+    [Parameter]
+    public bool Status {
+        get { return _status; }
+        set {
+
+            if (_status != value)
+            {
+                _status = value;
+                StatusChanged.InvokeAsync(_status);
+            }
+        }
+    }
+}
