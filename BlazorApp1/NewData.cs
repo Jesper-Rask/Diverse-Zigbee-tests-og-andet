@@ -44,7 +44,7 @@ namespace BlazorApp1
             timer.Enabled = false;
             if (lastPublishString.device != publishString.device || lastPublishString.message!=publishString.message)
             {
-                StartZigbeeCommunication.client.Publish(publishString.device, publishString.message);
+               StartZigbeeCommunication.client.Publish(publishString.device, publishString.message);
             }
         }
 

@@ -4,8 +4,9 @@ namespace ZigbeeModels
 {
     public static class Data
     {
+  //      public static ZigbeeDevice generic = new();
         public static List<ZigbeeDevice> zigbeeDevices = new();
-        public static List<BridgeDevice>? bridgeDevices=new();
+       public static List<BridgeDevice>? bridgeDevices=new();
 
         public static TempAndHumiSensor sensorKøkken = new();
         public static TempAndHumiSensor sensorKælderVærksted = new();
@@ -29,6 +30,9 @@ namespace ZigbeeModels
         public static LedPanel panel4Stue = new();
         public static LedPanel panel5Stue = new();
 
-       // public static int slider;
+        public static List<Connector> connectors = new();
+
+        public static List<string> eventNamesList = Enum.GetNames(typeof(ZigbeeDevice.EventNames)).ToList();
+        public static List<string> CommandsList = Enum.GetNames(typeof(ZigbeeDevice.Commands)).ToList();
     }
 }

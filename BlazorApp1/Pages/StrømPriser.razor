@@ -1,0 +1,81 @@
+﻿<AuthorizeView Roles = "Administrator">
+<Authorized>
+
+@page "/strømpriser"
+@using Strømpriser
+<h3>
+<button @onclick="Load">Hent strømpriser</button> Nuværende strømpris er @currentPrice kr. pr. kWh.
+</h3>
+<br />
+
+@foreach (ShownPrice shownPrice in prices)
+{
+    ShownPrice temp = shownPrice;
+    @temp.priceInString
+ //   <input type="range" min="0" max="5" id="range" class="slider" step="0.01" value="@temp.price"/> @temp.price
+    <br />
+}
+
+</Authorized>
+</AuthorizeView>
+
+@code {
+
+
+    private double spids = 1.0905;
+    private double høj = 0.3635;
+    private double lav = 0.1212;
+    private double afgift = 0.008;
+    private double diverse = 0.1643;
+    private double price;
+    private double currentPrice;
+    private List<ShownPrice> prices = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+            await Load();
+    }
+
+    private async Task Load()
+    {
+        StrømData data = await DataProcessor.LoadData();
+        prices = new();
+
+        DateTime currentTime = DateTime.Now;
+        foreach (Record item in data.records)
+        {
+            string row;
+            double tariff;
+
+            if ( item.HourDK.Hour >= 17 && item.HourDK.Hour < 21)
+            {
+                tariff = spids;
+            }
+            else if (item.HourDK.Hour >= 6 && item.HourDK.Hour < 17)
+            {
+                tariff = høj;
+            }
+            else if (item.HourDK.Hour >= 21 && item.HourDK.Hour <= 23)
+            {
+                tariff = høj;
+            }
+            else
+            {
+                tariff = lav;
+            }
+            price = Math.Round(1.25 * (item.SpotPriceDKK / 1000 + tariff + afgift + diverse), 2);
+            row = item.HourDK.ToString() + "    " + price + " kr. pr kWh";
+
+            if (currentTime.Hour == item.HourDK.Hour && currentTime.Date == item.HourDK.Date)
+            {
+                row = row + "  <==  Nuværende pris";
+                currentPrice = price;
+            }
+            ShownPrice shownPrice= new();
+            shownPrice.priceInString = row;
+            shownPrice.price = price;
+            prices.Add(shownPrice);
+            }
+        }
+
+}

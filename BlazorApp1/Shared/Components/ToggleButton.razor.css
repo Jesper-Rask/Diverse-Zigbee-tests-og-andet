@@ -25,6 +25,6 @@ input::before{
 }
 
     input:checked:before {
-        left: 40px;
+        left: 15px;
         background: lightgreen;
     }

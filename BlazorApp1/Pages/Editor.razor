@@ -1,4 +1,7 @@
-﻿@page "/editor"
+﻿<AuthorizeView Roles="Administrator">
+<Authorized>
+
+@page "/editor"
 @inject IJSRuntime JSRuntime
 @using Microsoft.AspNetCore.Components.Web;
 
@@ -20,6 +23,8 @@
 </body>
 
 
+</Authorized>
+</AuthorizeView>
 
 @code {
     double posX;
@@ -51,3 +56,4 @@
     }
 
 }
+

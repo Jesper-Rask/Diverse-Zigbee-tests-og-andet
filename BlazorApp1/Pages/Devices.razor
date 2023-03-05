@@ -1,6 +1,10 @@
-﻿@page "/Devices"
+﻿<AuthorizeView Roles = "Administrator">
+<Authorized >
+
+@page "/Devices"
 
 @using ZigbeeModels
+
 
 <h1>Devices</h1>
 <h4>Registrerede devices</h4>
@@ -13,10 +17,9 @@ div.position-absolute {
   top: 0;
   right: 1200px;
   width: 300px;
-  border: 3px solid #73AD21;
+  border: 13px solid #73AD21;
 }
 </style>
-
 
 @if (Data.bridgeDevices == null)
 {
@@ -55,7 +58,8 @@ else
         </tbody>
     </table>
 }
-
+</Authorized>
+</AuthorizeView>
 
 @code {
     bool enableEdit;
@@ -64,3 +68,6 @@ else
         edit = false;
     }
 }
+
+
+

@@ -9,12 +9,13 @@
     public bool Status {
         get { return _status; }
         set {
-
-            if (_status != value)
+            if (_status !=value)
             {
-                _status = value;
-                StatusChanged.InvokeAsync(_status);
+              _status = value;
+              StatusChanged.InvokeAsync(_status);
+             
             }
+ 
         }
     }
 }

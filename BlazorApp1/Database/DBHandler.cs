@@ -31,7 +31,7 @@ namespace BlazorApp1.Database
                 connection.Execute(query);
             }
         }
-        public List<TempAndHumiSensor> SelectData(string tableName, string name, DateTime from, DateTime to)
+        public async Task<List<TempAndHumiSensor>> SelectData(string tableName, string name, DateTime from, DateTime to)
         {
             string sFrom = from.ToString("yyyy-MM-dd HH:mm:ss");
             string sTo = to.ToString("yyyy-MM-dd HH:mm:ss");
@@ -41,7 +41,7 @@ namespace BlazorApp1.Database
                 $"Name='{name}'";
             List<TempAndHumiSensor> output = new();
 
-            using (var connection = new MySqlConnection($"Server={_serverAddress};Database={_databaseName};Uid={_user};Pwd={_password};"))
+            await using (var connection = new MySqlConnection($"Server={_serverAddress};Database={_databaseName};Uid={_user};Pwd={_password};"))
             {
                 var result = connection.Query<(double, double, DateTime)>(query).ToList();
                 foreach (var item in result)
@@ -55,6 +55,14 @@ namespace BlazorApp1.Database
                 }
                 return output;
             }
+        }
+        public void InsertDevice(ZigbeeDevice device)
+        {
+
+        }
+        public List<ZigbeeDevice> GetDevices()
+        {
+            return new List<ZigbeeDevice>();
         }
     }
 }

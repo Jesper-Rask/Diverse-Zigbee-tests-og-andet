@@ -1,0 +1,104 @@
+﻿<AuthorizeView Roles = "Administrator">
+<Authorized>
+
+@page "/Connections"
+@using BlazorApp1.ZigbeeModels
+@using static global::ZigbeeModels.ZigbeeDevice
+
+
+<h3>Bindinger</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+        <th>Sender</th>
+        <th>Hændelse</th>
+        <th>Modtager</th>
+        <th>Besked</th>
+        <th>Værdi</th>
+        <th>Edit</th>
+    </tr>
+    </thead>
+    <tbody>
+       <tr>
+        <td>
+            <select @bind="SelectedInput" @bind:event="onchange">
+                @foreach (ZigbeeDevice s in Data.zigbeeDevices)
+                {
+                    <option>
+                        @s.Name
+                    </option>
+                }
+            </select>
+        </td>
+
+        <td>
+            <select @bind="SelectedEvent" @bind:event="onchange">
+                @foreach (string s in Data.eventNamesList)
+                {
+                    <option>
+                        @s
+                    </option>
+                }
+            </select>
+        </td>
+        <td>
+            <select @bind="SelectedOutput" @bind:event="onchange">
+                @foreach (ZigbeeDevice s in Data.zigbeeDevices)
+                {
+                    <option>
+                        @s.Name
+                    </option>
+                }
+            </select>
+        </td>
+        <td>
+            <select @bind="SelectedCommand" @bind:event="onchange">
+                @foreach (string s in Data.CommandsList)
+                {
+                    <option>
+                        @s
+                    </option>
+                }
+            </select>
+        </td>
+        <td><input @bind="Value" @bind:event="onchange" type="number"/></td>
+        <td><button @onclick="AddConnection">Tilføj binding</button></td>
+    </tr>
+    @foreach (Connector conn in Data.connectors)
+    {
+        <tr>
+            <td>@conn.SenderName</td>
+            <td>@conn.EventName</td>
+            <td>@conn.ReceiverName</td>
+            <td>@conn.Command</td>
+            <td>@conn.Value</td>
+            <td><button @onclick=conn.RemoveConnection>Slet</button></td>
+        </tr>
+    }
+    </tbody>
+ </table>
+
+
+</Authorized>
+</AuthorizeView>
+
+
+@code {
+    private string SelectedInput;
+    private string SelectedOutput;
+    private string SelectedEvent;
+    private string SelectedCommand;
+    private int Value;
+
+    public void AddConnection()
+    {
+        EventNames eName;
+        Commands cmd;
+        Enum.TryParse<EventNames>(SelectedEvent, out eName);
+        Enum.TryParse<Commands>(SelectedCommand, out cmd);
+
+        Data.connectors.Insert(0, new Connector(SelectedInput, eName, SelectedOutput, cmd, Value));
+    }
+}
+
+
