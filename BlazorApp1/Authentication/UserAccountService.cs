@@ -6,13 +6,7 @@
 
         public UserAccountService()
         {
-            _users = new()
-            {
-                new UserAccount { UserName = "jra", Password = "ask", Role = "Administrator" },
-                new UserAccount { UserName = "y", Password = "y", Role = "User" },
-                new UserAccount { UserName = "z", Password = "z", Role = "ReadOnly" },
-
-            };
+            _users = StartZigbeeCommunication.db.GetUsers().Result;
         }
         public UserAccount? GetByUserName(string userName)
         {

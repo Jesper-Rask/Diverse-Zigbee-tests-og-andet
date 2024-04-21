@@ -1,5 +1,7 @@
-﻿using Dapper;
+﻿using BlazorApp1.Authentication;
+using Dapper;
 using MySql.Data.MySqlClient;
+using static BlazorApp1.ZigbeeModels.FugaTryk;
 
 namespace BlazorApp1.Database
 {
@@ -86,6 +88,18 @@ namespace BlazorApp1.Database
             {
                 var result = connection.Query<int>(query);
                 output = result.FirstOrDefault();
+            }
+            return output;
+        }
+
+        public async Task<List<UserAccount>> GetUsers()
+        {
+            List<UserAccount> output = new();
+            string query = $"SELECT username, password, role FROM zigbeedb.Users;";
+            await using (var connection = new MySqlConnection($"Server={_serverAddress};Database={_databaseName};Uid={_user};Pwd={_password};"))
+            {
+                var result = connection.Query<UserAccount>(query);
+                output = result.ToList();
             }
             return output;
         }
