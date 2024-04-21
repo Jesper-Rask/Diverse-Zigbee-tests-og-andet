@@ -1,39 +1,137 @@
-﻿<AuthorizeView Roles = "Administrator">
-<Authorized>
+﻿<AuthorizeView>
+    <NotAuthorized>
 
-@page "/strømpriser"
-@using Strømpriser
-<h3>
-<button @onclick="Load">Hent strømpriser</button> Nuværende strømpris er @currentPrice kr. pr. kWh.
-</h3>
-<br />
+        @page "/strømpriser"
+        @using Strømpriser
+        @using ZigbeeModels
 
-@foreach (ShownPrice shownPrice in prices)
-{
-    ShownPrice temp = shownPrice;
-    @temp.priceInString
- //   <input type="range" min="0" max="5" id="range" class="slider" step="0.01" value="@temp.price"/> @temp.price
-    <br />
-}
+        <h1 style="text-align:center">
+            Aktuelle Strømpriser
 
-</Authorized>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+
+        </h1>
+
+        <div style="display: flex;">
+            @foreach (ShownPrice price in prices)
+            {
+                if ((currentTime.Hour == price.date.Hour) && (currentTime.Date == price.date.Date))
+                {
+                    <Bar Percentage=price.pricePercent IsItCurrentHour=true Price=price.price Time=price.date.Hour>  </Bar>
+                }
+                else
+                {
+                    <Bar Percentage=price.pricePercent IsItCurrentHour=false Price=price.price Time=price.date.Hour> </Bar>
+                }
+            }
+        </div>
+
+        <br />
+        <br />
+
+        @*
+
+            <table class="table table-bordered">
+            <thead>
+            <tr>
+            <th>Dag</th>
+            <th>00-01</th>
+            <th>01-02</th>
+            <th>02-03</th>
+            <th>03-04</th>
+            <th>04-05</th>
+            <th>05-06</th>
+            <th>06-07</th>
+            <th>07-08</th>
+            <th>08-09</th>
+            <th>09-10</th>
+            <th>10-11</th>
+            <th>11-12</th>
+            <th>12-13</th>
+            <th>13-14</th>
+            <th>14-15</th>
+            <th>15-16</th>
+            <th>16-17</th>
+            <th>17-18</th>
+            <th>18-19</th>
+            <th>19-20</th>
+            <th>20-21</th>
+            <th>21-22</th>
+            <th>22-23</th>
+            <th>23-00</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr>
+            <td>Idag</td>
+            @foreach(ShownPrice price in prices)
+            {
+            if (price.date.Date == currentTime.Date)
+            {
+            if (currentTime.Hour == price.date.Hour)
+            {
+            <th> <p style="color:blue">@price.price </p> </th>
+            }
+            else
+            {
+            <td>@price.price</td>
+            }
+
+            }
+            }
+            </tr>
+            <tr>
+            <td>Imorgen</td>
+            @foreach(ShownPrice price in prices)
+            {
+            if (price.date.Date != currentTime.Date)
+            {
+            <td>@price.price</td>
+            }
+            }
+            </tr>
+            </tbody>
+            </table>
+        *@
+
+    </NotAuthorized>
 </AuthorizeView>
 
 @code {
 
 
-    private double spids = 1.0905;
-    private double høj = 0.3635;
-    private double lav = 0.1212;
-    private double afgift = 0.008;
-    private double diverse = 0.1643;
+    //private double spids = 1.0905;
+    //private double høj = 0.3635;
+    //private double lav = 0.1212;
+    private int i;
+    //private double spids = 0.4726;  // sommer
+    //private double høj = 0.1818;    // sommer
+    //private double lav = 0.1212;    // sommer
+
+    private double spids = 0.3317;  // sommer 07_04_2024
+    private double høj = 0.1276;    // sommer 07_04_2024
+    private double lav = 0.0851;    // sommer 07_04_2024
+
+    private double afgift = 0.761;  // 2024
+    static private double handelsomkostninger = 0.07;
+    static private double transmissionstarif = 0.074;
+    static private double systemtarif = 0.051;
+    static private double gebyr = 0.0013;
+    private double diverse = handelsomkostninger + transmissionstarif + systemtarif + gebyr;
     private double price;
+    private double pricePercent;
     private double currentPrice;
     private List<ShownPrice> prices = new();
+    private DateTime currentTime;
 
     protected override async Task OnInitializedAsync()
     {
-            await Load();
+        await Load();
     }
 
     private async Task Load()
@@ -41,13 +139,13 @@
         StrømData data = await DataProcessor.LoadData();
         prices = new();
 
-        DateTime currentTime = DateTime.Now;
+        currentTime = DateTime.Now;
         foreach (Record item in data.records)
         {
             string row;
             double tariff;
 
-            if ( item.HourDK.Hour >= 17 && item.HourDK.Hour < 21)
+            if (item.HourDK.Hour >= 17 && item.HourDK.Hour < 21)
             {
                 tariff = spids;
             }
@@ -71,11 +169,13 @@
                 row = row + "  <==  Nuværende pris";
                 currentPrice = price;
             }
-            ShownPrice shownPrice= new();
+            ShownPrice shownPrice = new();
             shownPrice.priceInString = row;
             shownPrice.price = price;
+            shownPrice.pricePercent = (int)(price * (100 / 3));
+            shownPrice.date = item.HourDK;
             prices.Add(shownPrice);
-            }
         }
+    }
 
 }

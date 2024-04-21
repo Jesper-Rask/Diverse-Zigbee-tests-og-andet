@@ -1,6 +1,7 @@
 ﻿
 
 
+using BlazorApp1.ZigbeeModels;
 using System.Timers;
 
 namespace BlazorApp1
@@ -16,6 +17,9 @@ namespace BlazorApp1
         PublishString lastPublishString=new();
         public event EventHandler<TempAndHumiSensor> airSensorEvent;
         public event EventHandler<PIRSensorModel> pirSensorEvent;
+        public event EventHandler<RadiatorValve> radiatorValveEvent;
+        public event EventHandler<LedPanel> ledPanelEvent;
+
         private System.Timers.Timer timer = new(200);
 
         public void ZigbeePublishMessage (string device, string message)
@@ -36,7 +40,15 @@ namespace BlazorApp1
         {
             StartZigbeeCommunication.AirSensorEvent += AirSensorEvent;
             StartZigbeeCommunication.PirSensorEvent += PirSensorEvent;
+            StartZigbeeCommunication.RadiatorValveEvent += RadiatorValveEvent;
+            StartZigbeeCommunication.LedPanelEvent += LedPanelEvent;
+
             timer.Elapsed += DelayedZigbeePublishMessage;
+        }
+
+        private void RadiatorValveEvent(object? sender, RadiatorValve e)
+        {
+            radiatorValveEvent.Invoke(sender, e);
         }
 
         private void DelayedZigbeePublishMessage(object sender, ElapsedEventArgs e)
@@ -46,6 +58,11 @@ namespace BlazorApp1
             {
                StartZigbeeCommunication.client.Publish(publishString.device, publishString.message);
             }
+        }
+
+        private void LedPanelEvent(object sender, LedPanel e)
+        {
+            ledPanelEvent?.Invoke(sender, e);
         }
 
         private void PirSensorEvent(object sender, PIRSensorModel e)

@@ -1,7 +1,7 @@
 ﻿var temperatur = [];
 var fugtighed =[];
 var tidsstempel =[];
-
+var graf;
 var temp;
 var fugt;
 var navn;
@@ -16,11 +16,8 @@ function TransferData(chartName, tempList, fugtList, tidList) {
     CreateChart();
 }
 
-var graf;
-
-
 function CreateChart() {
-    let chartStatus = Chart.getChart("Graf"); // <canvas> id
+    let chartStatus = Chart.getChart("Graf");
     if (chartStatus != undefined) {
         chartStatus.destroy();
     }
@@ -72,7 +69,6 @@ function CreateChart() {
 }
 
 function AddDataPoint(temperatur, fugtighed, tidsstempel, name) {
-
     if (name == navn) {
         this.tidsstempel.shift();
         this.temperatur.shift();
@@ -80,10 +76,8 @@ function AddDataPoint(temperatur, fugtighed, tidsstempel, name) {
         this.temperatur.push(temperatur);
         this.fugtighed.push(fugtighed);
         this.tidsstempel.push(tidsstempel);
-
         Upd();
     }
-
 }
 
 function Upd() {

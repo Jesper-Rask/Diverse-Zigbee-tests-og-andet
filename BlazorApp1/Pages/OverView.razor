@@ -1,5 +1,7 @@
-﻿<AuthorizeView Roles ="Administrator">
+﻿<AuthorizeView Roles ="Administrator, ReadOnly">
 <Authorized>
+
+
 
 <h3>Overblik</h3>
 
@@ -15,7 +17,11 @@
 @inject IJSRuntime JSRuntime
 @implements IAsyncDisposable
 
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@if (readOnly){
+    <h7>readonly mode</h7>
+}
+<div class="@(readOnly ? "readonly" : "")">
 
 
 
@@ -24,7 +30,7 @@
         <table style="width:80%" class="table table-striped">
             <thead>
                 <tr>
-                    <th>Led Panel</th>
+                    <th>Lamper</th>
                     <th>Tænd / sluk</th>
                     <th>Lysstyrke</th>
                     <th>Farvetemperatur</th>
@@ -44,6 +50,44 @@
                             <td><input @bind="p.Brightness" @bind:event="oninput" type="range" min="0" max="254" id="range" class="slider" step="1" /></td>
                             <td><input @bind="p.ColorTemp" @bind:event="oninput" type="range" min="160" max="450" id="range" class="slider" step="1" /></td>
                             <td>@p.TimeStamp</td>
+                            </tr>
+                        }
+                        else if (zigbee is IkeaBulb)
+                        {
+                            IkeaBulb i = (IkeaBulb)zigbee;
+                            <tr>
+                                <td>@i.Name</td>
+                            </tr>
+                        }
+                }
+            </tbody>
+        </table>
+
+             <table style="width:80%" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Radiatorventil</th>
+                    <th>Setpunkt</th>
+                    <th>Temperatur</th>
+                    <th>Batteri</th>
+                    <th>Signal</th>
+                    <th>Tidsstempel</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (ZigbeeDevice zigbee in Data.zigbeeDevices)
+                {
+                    if (zigbee is RadiatorValve)
+                    {
+                        RadiatorValve r = (RadiatorValve)zigbee;
+                        <tr>
+                            <td>@r.Name</td>
+                            <td><input @bind="r.RadiatorSP" @bind:event="oninput" type="range" min="5" max="30" id="range" class="slider" step="1" />@r.current_heating_setpoint °C </td>
+                            <td>@r.local_temperature °C</td>
+                            <td>@r.battery</td>
+                            <td>@r.linkquality</td>
+                            <td>@r.TimeStamp</td>
 
 
                         </tr>
@@ -54,6 +98,10 @@
         </table>
 
         <style>
+                .readonly {
+        background-color: lightgray;
+        pointer-events: none;
+    }
             .testButtons {
                 border-radius: 6px;
                 background-color: #6CA350;
@@ -112,7 +160,7 @@
                             <td>@temp.Name.Substring(7)</td>
                             <td>@temp.temperature °C</td>
                             <td>@temp.humidity%</td>
-                            <td>@temp.voltage mV</td>
+                            <td>@temp.battery%</td>
                             <td>@temp.linkquality</td>
                             <td>@temp.TimeStamp.ToLocalTime()</td>
                         </tr>
@@ -121,6 +169,8 @@
 
             </tbody>
         </table>
+
+        </div>
 
         <br /><br />
         <div style="width:80%;">
@@ -181,16 +231,16 @@
     bool test;
     int brightness;
 
-    private string _selectedChart = "";
+    private string _selectedChart = "Sensor Kontor";
     public string SelectedChart { get { return _selectedChart; } set { _selectedChart = value; LoadFromDB(value); } }
 
     private HubConnection hubConnection;
-    private TempAndHumiSensor bedRoomSensor = Data.sensorSoveVærelse;
-    private TempAndHumiSensor livingRoomSensor = Data.sensorStue;
-    private TempAndHumiSensor juliesRoomSensor = Data.sensorJuliesVærelse;
-    private TempAndHumiSensor washingRoomSensor = Data.sensorVaskerum;
-    private TempAndHumiSensor workshopRoomSensor = Data.sensorKælderVærksted;
-    private TempAndHumiSensor kitchenRoomSensor = Data.sensorKøkken;
+    //private TempAndHumiSensor bedRoomSensor = Data.sensorSoveVærelse;
+    //private TempAndHumiSensor livingRoomSensor = Data.sensorStue;
+    //private TempAndHumiSensor juliesRoomSensor = Data.sensorJuliesVærelse;
+    //private TempAndHumiSensor washingRoomSensor = Data.sensorVaskerum;
+    //private TempAndHumiSensor workshopRoomSensor = Data.sensorKælderVærksted;
+    //private TempAndHumiSensor kitchenRoomSensor = Data.sensorKøkken;
 
     private PIRSensorModel pirSensor = Data.sensorPirSoveværelse;
     public List<double> tempList = new();
@@ -251,13 +301,22 @@
                                                        zigbee.Name);
     }
 
+
+    public bool readOnly;
+
     protected override async Task OnInitializedAsync()
     {
-
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        readOnly = authenticationState.User.IsInRole("ReadOnly");
         data.airSensorEvent -= NewAirSensorMessage;
         data.airSensorEvent += NewAirSensorMessage;
         data.pirSensorEvent -= NewPirSensorMessage;
         data.pirSensorEvent += NewPirSensorMessage;
+        data.radiatorValveEvent -= NewRadiatorMessage;
+        data.radiatorValveEvent += NewRadiatorMessage;
+        data.ledPanelEvent -= NewLedPanelMessage;
+        data.ledPanelEvent += NewLedPanelMessage;
+
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
@@ -265,16 +324,16 @@
 
         hubConnection.On<TempAndHumiSensor>("RecieveAirSensor", (message) =>
         {
-            switch (message.Name)
-            {
-                case "Sensor Stue": livingRoomSensor = message; break;
-                case "Sensor Soveværelse": bedRoomSensor = message; break;
-                case "Sensor Julies Værelse": juliesRoomSensor = message; break;
-                case "Sensor Vaskerum": washingRoomSensor = message; break;
-                case "Sensor Kælder Værksted": workshopRoomSensor = message; break;
-                case "Sensor Køkken": kitchenRoomSensor = message; break;
-                default: break;
-            }
+            //switch (message.Name)
+            //{
+            //    case "Sensor Stue": livingRoomSensor = message; break;
+            //    case "Sensor Soveværelse": bedRoomSensor = message; break;
+            //    case "Sensor Julies Værelse": juliesRoomSensor = message; break;
+            //    case "Sensor Vaskerum": washingRoomSensor = message; break;
+            //    case "Sensor Kælder Værksted": workshopRoomSensor = message; break;
+            //    case "Sensor Køkken": kitchenRoomSensor = message; break;
+            //    default: break;
+            //}
             InvokeAsync(StateHasChanged);
         });
         hubConnection.On<PIRSensorModel>("RecievePirSensor", (message) =>
@@ -289,13 +348,21 @@
         //        InvokeAsync(StateHasChanged);
         //    });
 
-        hubConnection.On("RecieveChange", () =>
+        hubConnection.On<LedPanel>("ReceiveLedPanel", (message) =>
         {
             InvokeAsync(StateHasChanged);
         });
 
+        hubConnection.On<RadiatorValve>("ReceiveRadiatorValve", (message) =>
+       {
+           
+           InvokeAsync(StateHasChanged);
+       });
+
         await hubConnection.StartAsync();
     }
+
+
 
     public void NewAirSensorMessage(object sender, TempAndHumiSensor zigbee)
     {
@@ -313,6 +380,25 @@
             hubConnection.SendAsync("SendPirSensorMessage", zigbee);
         }
     }
+
+    public void NewRadiatorMessage(object sender, RadiatorValve zigbee)
+    {
+        if (hubConnection is not null)
+        {
+            hubConnection.SendAsync("SendRadiatorValveMessage", zigbee);
+        }
+    }
+
+     public void NewLedPanelMessage(object sender, LedPanel zigbee)
+    {
+        if (hubConnection is not null)
+        {
+            hubConnection.SendAsync("SendLedPanelMessage", zigbee);
+        }
+    }
+
+
+
 
 
     public bool IsConnected =>

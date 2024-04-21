@@ -21,11 +21,6 @@ namespace MqttComm
 
         private void CreateConnectors()
         {
-            Data.connectors.Add(new Connector("Test Tryk", ZigbeeDevice.EventNames.Button1Pressed, "IKEA Pære Soveværelse", ZigbeeDevice.Commands.Turn_On, 0));
-            Data.connectors.Add(new Connector("Test Tryk", ZigbeeDevice.EventNames.Button3Pressed, "IKEA Pære Soveværelse", ZigbeeDevice.Commands.Turn_Off, 0));
-            Data.connectors.Add(new Connector("Test Tryk", ZigbeeDevice.EventNames.Button2Pressed, "IKEA Pære Soveværelse", ZigbeeDevice.Commands.BrightnessMove, -20));
-            Data.connectors.Add(new Connector("Test Tryk", ZigbeeDevice.EventNames.Button4Pressed, "IKEA Pære Soveværelse", ZigbeeDevice.Commands.SetBrightness, 253));
-
             Data.connectors.Add(new Connector("Fuga Tryk Køkken", EventNames.Button1Pressed, "Lampe 1 Køkken", Commands.Turn_On, 0));
             Data.connectors.Add(new Connector("Fuga Tryk Køkken", EventNames.Button1Pressed, "Lampe 2 Køkken", Commands.Turn_On, 0));
             Data.connectors.Add(new Connector("Fuga Tryk Køkken", EventNames.Button1LongPressed, "Lampe 1 Køkken", Commands.BrightnessMove, 50));
@@ -84,10 +79,20 @@ namespace MqttComm
 
             Data.connectors.Add(new Connector("Sensor Kælder Bad", EventNames.HumidityAboveHigh, "Ventilator Kælder Bad", Commands.Turn_On, 0));
             Data.connectors.Add(new Connector("Sensor Kælder Bad", EventNames.HumidityBelowLow, "Ventilator Kælder Bad", Commands.Turn_Off, 0));
+
+            Data.connectors.Add(new Connector("PIR Sensor Carport", EventNames.MotionDetected, "IKEA Pære Carport", Commands.Turn_On, 0));
+            Data.connectors.Add(new Connector("PIR Sensor Carport", EventNames.MotionNotDetected, "IKEA Pære Carport", Commands.Turn_Off, 0));
         }
 
         private static void ZigbeeDevicesToList()
         {
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kontor", Id = "0x003c84fffecbb586" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Systue", Id = "0x003c84fffecefe59" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kælder Entre", Id = "0x003c84fffecbb580" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kælder Vaskerum", Id = "0x94deb8fffe2e72f7" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kælder Bad", Id = "0x003c84fffec4f600" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kælder Julies Værelse", Id = "0x003c84fffec4f30d" });
+            Data.zigbeeDevices.Add(new RadiatorValve { Name = "Radiatorventil Kælder Julies Tøjværelse", Id = "0x003c84fffec52cb2" });
             Data.zigbeeDevices.Add(new TempAndHumiSensor { Name = "Sensor Køkken", Id = "0x00124b0025034367" });
             Data.zigbeeDevices.Add(new TempAndHumiSensor { Name = "Sensor Kælder Værksted", Id = "0x00124b0025030228" });
             Data.zigbeeDevices.Add(new TempAndHumiSensor { Name = "Sensor Vaskerum", Id = "0x00124b00250338cf" });
@@ -99,8 +104,8 @@ namespace MqttComm
             Data.zigbeeDevices.Add(new TempAndHumiSensor { Name = "Sensor Bad", Id = "0x00124b00251e034d" });
             Data.zigbeeDevices.Add(new TempAndHumiSensor { Name = "Sensor Kælder Bad", Id = "0x00124b0025212f83" });
             Data.zigbeeDevices.Add(new Switch { Name = "Relæ", Id = "0x00124b002343dff3" });
-            Data.zigbeeDevices.Add(new PIRSensorModel { Name = "PIR Sensor", Id = "0x00124b002508d2ce" });
-            Data.zigbeeDevices.Add(new IkeaBulb { Name = "IKEA Pære Soveværelse", Id = "0x94deb8fffe575196" });
+            Data.zigbeeDevices.Add(new PIRSensorModel { Name = "PIR Sensor Entre", Id = "0x00124b002508d2ce" });
+            Data.zigbeeDevices.Add(new IkeaBulb { Name = "IKEA Pære Carport", Id = "0x94deb8fffe575196" });
             Data.zigbeeDevices.Add(new FugaTryk { Name = "Test Tryk", Id = "0x000000000171819b" });
             Data.zigbeeDevices.Add(new IkeaTryk { Name = "IKEA Tryk", Id = "0x540f57fffe3c6bee" });
             Data.zigbeeDevices.Add(new FugaTryk { Name = "Fuga Tryk Køkken", Id = "0x000000000171191b" });
@@ -116,6 +121,7 @@ namespace MqttComm
             Data.zigbeeDevices.Add(new LedPanel { Name = "Lampe 5 Stue", Id = "0x84ba20fffe344f74" });
             Data.zigbeeDevices.Add(new LedPanel { Name = "Lampe Entre",             Id = "0x84ba20fffe344f08" });
             Data.zigbeeDevices.Add(new Switch   { Name = "Ventilator Kælder Bad",  Id = "0x9035eafffeef70ca" });
+            Data.zigbeeDevices.Add(new PIRSensorModel { Name = "PIR Sensor Carport", Id = "0x00124b002508d3b8" });
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 1", Id = "" });
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 2", Id = "" });
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 3", Id = "" });
@@ -123,6 +129,24 @@ namespace MqttComm
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 5", Id = "" });
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 6", Id = "" });
 
+
+            WeeklySchedule schedule = new();
+
+            TimeOnly time1 = new TimeOnly(15, 21);
+            TimeOnly time2 = new TimeOnly(15, 22);
+            TimeOnly time3 = new TimeOnly(15, 23);
+            TimeOnly time4 = new TimeOnly(15, 24);
+
+
+            schedule.AddScheduleItem(DayOfWeek.Sunday, time1, true, 1);
+            schedule.AddScheduleItem(DayOfWeek.Sunday, time2, true, 250);
+            schedule.AddScheduleItem(DayOfWeek.Sunday, time3, true, 1);
+            schedule.AddScheduleItem(DayOfWeek.Sunday, time4, false, 1);
+            schedule.Name = "Ugeskema 1";
+            schedule.Id = "";
+
+
+            Data.zigbeeDevices.Add(schedule);
 
         }
         public void Publish(string topic, string message)
@@ -144,7 +168,10 @@ namespace MqttComm
                 mqttClient.MqttMsgPublishReceived += MqttClient_MqttMsgPublishReceived;
                 mqttClient.MqttMsgPublished += MqttMsgPublished;
                 byte[] QOS = new byte[Data.zigbeeDevices.Count()];
-                Array.Fill(QOS, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE);
+                Array.Fill(QOS, MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE);
+
+
+
                 mqttClient.Subscribe(Data.zigbeeDevices.Select(x => "zigbee2mqtt/" + x.Id).ToArray(), QOS);
                 mqttClient.Subscribe(new string[] {
                     "zigbee2mqtt/bridge/config/devices",
@@ -270,6 +297,16 @@ namespace MqttComm
                         fugaTryk.Name = foundDevice.Name;
                         fugaTryk.Id = foundDevice.Id;
                         return fugaTryk;
+                    }
+                    goto default;
+
+                case RadiatorValve:
+                    RadiatorValve? radiatorValve = JsonSerializer.Deserialize<RadiatorValve>(message);
+                    if (radiatorValve != null)
+                    {
+                        radiatorValve.Name = foundDevice.Name;
+                        radiatorValve.Id = foundDevice.Id;
+                        return radiatorValve;
                     }
                     goto default;
                 default:

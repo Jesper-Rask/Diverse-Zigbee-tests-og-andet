@@ -31,7 +31,16 @@ namespace BlazorApp1.ZigbeeModels
                 case TonTimer: AddTonTimerSubscribtion((TonTimer)senderDevice); break;
                 case PIRSensorModel: AddPirSensorSubscribtion((PIRSensorModel)senderDevice); break;
                 case TempAndHumiSensor: AddTempAndHumiSensorSubscribtion((TempAndHumiSensor)senderDevice); break;
+                case WeeklySchedule: AddWeeklyScheduleSubscription((WeeklySchedule)senderDevice); break;
+            }
+        }
 
+        private void AddWeeklyScheduleSubscription(WeeklySchedule senderDevice)
+        {
+            switch (EventName)
+            {
+                case EventNames.WeeklyScheduleOn: senderDevice.CalenderActive += ButtonPressed; break;
+                case EventNames.WeeklyScheduleOff: senderDevice.CalenderInactive += ButtonPressed; break;
             }
         }
 
@@ -70,9 +79,19 @@ namespace BlazorApp1.ZigbeeModels
                 case TonTimer: RemoveTonTimerSubscribtion((TonTimer)senderDevice); break;
                 case PIRSensorModel: RemovePirSensorSubscribtion((PIRSensorModel)senderDevice); break;
                 case TempAndHumiSensor: RemoveTempAndHumiSensorSubscription((TempAndHumiSensor)senderDevice); break;
+                case WeeklySchedule: RemoveWeeklyScheduleSubscription((WeeklySchedule)senderDevice); break;
 
             }
             Data.connectors.Remove(this);
+        }
+
+        private void RemoveWeeklyScheduleSubscription(WeeklySchedule senderDevice)
+        {
+            switch (EventName)
+            {
+                case EventNames.WeeklyScheduleOn: senderDevice.CalenderActive -= ButtonPressed; break;
+                case EventNames.WeeklyScheduleOff: senderDevice.CalenderInactive -= ButtonPressed; break;
+            }
         }
 
         private void RemoveTempAndHumiSensorSubscription(TempAndHumiSensor senderDevice)
@@ -164,8 +183,12 @@ private void AddFugaTrykSubscribtion(FugaTryk sender)
 }
 
 
-private void ButtonPressed(object? sender, EventArgs e)
+private void ButtonPressed(object? sender, int value)
 {
+    if (value != -1)
+    {
+         Value = value;
+    }
     switch (receiverDevice)
     {
         case LedPanel: LedPanel ledPanel = (LedPanel)receiverDevice; ledPanel.Send(Command, Value); break;

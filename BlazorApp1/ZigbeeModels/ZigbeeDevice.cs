@@ -21,7 +21,8 @@
             SetColorTemp,
             ColorTempMove,
             StartTimer,
-            StopTimer
+            StopTimer,
+            SetSetpoint
         }
 
         public enum EventNames
@@ -54,7 +55,10 @@
             HumidityAboveHigh,
             HumidityBelowHigh,
             HumidityAboveLow,
-            HumidityBelowLow
+            HumidityBelowLow,
+            WeeklyScheduleOn,
+            WeeklyScheduleOff,
+            SetpointChanged
         }
 
 

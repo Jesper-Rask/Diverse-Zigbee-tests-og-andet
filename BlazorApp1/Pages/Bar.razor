@@ -1,0 +1,108 @@
+﻿@*
+<div style="width: 20px; height: 300px; background: linear-gradient(to top, green, yellow, red); position: relative; border:1px solid lightgrey;"
+    class="@GetBarStyle() @GetCurrentHourStyle()" 
+     @onmouseover="ZoomIn" @onmouseout="ZoomOut" ontouchstart="ZoomIn" ontouchend="ZoomOut">
+     @if (ShouldPriceBeShown())
+    {
+        <div class = "prisAnimation">
+       <div class="pris">@Price kr. pr. kWt. @GetText()</div> 
+       </div>
+     
+    }
+    <div style="height: @_100Subpercentage%;  width: 100%; background-color: Background; position: absolute; top: 0; "></div>
+</div>
+
+*@
+
+<div class="barContainer">
+    @if (ShouldPriceBeShown())
+    {
+        <div class="emptyBar @GetBarStyle() @GetCurrentHourStyle()" style="height:@Percentage%" >
+            <div class="prisAnimation">
+                <div class="pris">@Price kr. pr. kWt. @GetText()</div>
+            </div>
+        </div>
+    }
+    <div class="bar @GetBarStyle() @GetCurrentHourStyle()" style="height: @Percentage%;" 
+         @onmouseover="ZoomIn" @onmouseout="ZoomOut" ontouchstart="ZoomIn" ontouchend="ZoomOut">
+        <div class="barGradient"></div>
+    </div>
+</div>
+
+
+
+
+@code {
+    [Parameter]
+    public int Percentage {
+        get { return _percentage; }
+        set { _percentage = value; _100Subpercentage = 100 - _percentage; }
+    }
+
+    [Parameter]
+    public double Price { get; set; }
+
+    [Parameter]
+    public bool IsItCurrentHour { get; set; }
+
+    [Parameter]
+    public int Time { get; set; }
+
+    private int _100Subpercentage;
+    private int _percentage;
+    private bool isZoomed = false;
+    private int NextHour()
+    {
+        return Time + 1;
+    }
+
+
+
+    private void ZoomIn()
+    {
+        isZoomed = true;
+    }
+
+    private void ZoomOut()
+    {
+        isZoomed = false;
+    }
+
+    private string GetBarStyle()
+    {
+
+        return isZoomed ? "zoom" : "";
+    }
+
+    private string GetCurrentHourStyle()
+    {
+        if (isZoomed) return "";
+        return IsItCurrentHour ? "pulse" : "";
+    }
+
+    private bool ShouldPriceBeShown()
+    {
+        if (isZoomed || IsItCurrentHour) return true;
+        return false;
+    }
+
+    private string GetText()
+    {
+        string text;
+        if (IsItCurrentHour)
+        {
+            text = " lige nu";
+        }
+        else
+        {
+            text = $" mellem kl. {Time} og {Time + 1}";
+        }
+
+        return text;
+    }
+
+
+}
+
+
+@**@

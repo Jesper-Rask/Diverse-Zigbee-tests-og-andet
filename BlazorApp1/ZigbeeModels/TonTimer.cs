@@ -4,7 +4,7 @@ namespace BlazorApp1.ZigbeeModels
 {
     public class TonTimer : ZigbeeDevice
     {
-        public event EventHandler TimerElapsed;
+        public event EventHandler<int> TimerElapsed;
         private System.Timers.Timer timer = new();
         public void Send(Commands cmd, int value = 0)
         {
@@ -33,7 +33,7 @@ namespace BlazorApp1.ZigbeeModels
 
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
-            TimerElapsed?.Invoke(sender, e);
+            TimerElapsed?.Invoke(sender, -1);
         }
     }
 }

@@ -2,24 +2,24 @@
 {
     public class TempAndHumiSensor : BatteryPoweredDevice
     {
-        public event EventHandler TemperatureChanged;
-        public event EventHandler TemperatureAboveHigh;
-        public event EventHandler TemperatureBelowHigh;
-        public event EventHandler TemperatureAboveLow;
-        public event EventHandler TemperatureBelowLow;
-        public event EventHandler HumidityChanged;
-        public event EventHandler HumidityAboveHigh;
-        public event EventHandler HumidityBelowHigh;
-        public event EventHandler HumidityAboveLow;
-        public event EventHandler HumidityBelowLow;
+        public event EventHandler<int> TemperatureChanged;
+        public event EventHandler<int> TemperatureAboveHigh;
+        public event EventHandler<int> TemperatureBelowHigh;
+        public event EventHandler<int> TemperatureAboveLow;
+        public event EventHandler<int> TemperatureBelowLow;
+        public event EventHandler<int> HumidityChanged;
+        public event EventHandler<int> HumidityAboveHigh;
+        public event EventHandler<int> HumidityBelowHigh;
+        public event EventHandler<int> HumidityAboveLow;
+        public event EventHandler<int> HumidityBelowLow;
 
         private double _temperature;
         private double _humidity;
 
         public double TemperatureHighLimit { get; set; } = 23;
         public double TemperatureLowLimit { get; set; } = 20;
-        public double HumidityHighLimit { get; set; } = 70;
-        public double HumidityLowLimit { get; set; } = 65;
+        public double HumidityHighLimit { get; set; } = 80;
+        public double HumidityLowLimit { get; set; } = 75;
         public double humidity
         {
             get { return _humidity; }
@@ -28,11 +28,11 @@
                 if (value != _humidity)
                 {
                     _humidity = value;
-                    HumidityChanged?.Invoke(this, EventArgs.Empty);
-                    if (value < HumidityHighLimit) HumidityBelowHigh?.Invoke(this, EventArgs.Empty);
-                    if (value < HumidityLowLimit) HumidityBelowLow?.Invoke(this, EventArgs.Empty);
-                    if (value > HumidityHighLimit) HumidityAboveHigh?.Invoke(this, EventArgs.Empty);
-                    if (value > HumidityLowLimit) HumidityAboveLow?.Invoke(this, EventArgs.Empty);
+                    HumidityChanged?.Invoke(this, -1);
+                    if (value < HumidityHighLimit) HumidityBelowHigh?.Invoke(this, -1);
+                    if (value < HumidityLowLimit) HumidityBelowLow?.Invoke(this, -1);
+                    if (value > HumidityHighLimit) HumidityAboveHigh?.Invoke(this, -1);
+                    if (value > HumidityLowLimit) HumidityAboveLow?.Invoke(this, -1);
                 }
             }
         }
@@ -44,11 +44,11 @@
                 if (value != _temperature)
                 {
                     _temperature = value;
-                    TemperatureChanged?.Invoke(this, EventArgs.Empty);
-                    if (value < TemperatureHighLimit) TemperatureBelowHigh?.Invoke(this, EventArgs.Empty);
-                    if (value < TemperatureLowLimit) TemperatureBelowLow?.Invoke(this, EventArgs.Empty);
-                    if (value > TemperatureHighLimit) TemperatureAboveHigh?.Invoke(this, EventArgs.Empty);
-                    if (value > TemperatureLowLimit) TemperatureAboveLow?.Invoke(this, EventArgs.Empty);
+                    TemperatureChanged?.Invoke(this, -1);
+                    if (value < TemperatureHighLimit) TemperatureBelowHigh?.Invoke(this, -1);
+                    if (value < TemperatureLowLimit) TemperatureBelowLow?.Invoke(this, -1);
+                    if (value > TemperatureHighLimit) TemperatureAboveHigh?.Invoke(this, -1);
+                    if (value > TemperatureLowLimit) TemperatureAboveLow?.Invoke(this, -1);
                 }
             }
         }

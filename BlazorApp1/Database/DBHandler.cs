@@ -64,5 +64,30 @@ namespace BlazorApp1.Database
         {
             return new List<ZigbeeDevice>();
         }
+
+        public async Task<int> IncreaseVisitorsCount()
+        {
+            var count = await GetVisitorsCount();
+            count++;
+            string query = $"update Variables set VisitorsCount = '{ count }' where id='1';";
+            using (var connection = new MySqlConnection($"Server={_serverAddress};Database={_databaseName};Uid={_user};Pwd={_password};"))
+            {
+                connection.Execute(query);
+            }
+            return count;
+        }
+
+        public async Task<int> GetVisitorsCount()
+        {
+            string query = $"SELECT VisitorsCount FROM `zigbeedb`.`Variables` where id = '1'";
+            int output = 0;
+
+            await using (var connection = new MySqlConnection($"Server={_serverAddress};Database={_databaseName};Uid={_user};Pwd={_password};"))
+            {
+                var result = connection.Query<int>(query);
+                output = result.FirstOrDefault();
+            }
+            return output;
+        }
     }
 }

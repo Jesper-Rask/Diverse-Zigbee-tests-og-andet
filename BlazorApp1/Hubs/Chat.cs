@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using BlazorApp1.ZigbeeModels;
+using Microsoft.AspNetCore.SignalR;
 using System.Timers;
 
 namespace BlazorApp1.Hubs
@@ -30,6 +31,11 @@ namespace BlazorApp1.Hubs
         {
             await Clients.All.SendAsync("RecievePirSensor", pirSensor);
         }
+
+        public async Task SendRadiatorValveMessage(RadiatorValve valve)
+        {
+            await Clients.All.SendAsync("ReceiveRadiatorValve", valve);
+        }
         public async Task SendIntMessage(int number)
         {
             this.number = number;
@@ -44,10 +50,16 @@ namespace BlazorApp1.Hubs
 
         }
 
-        public async Task SendSomethingMessage()
+        public async Task SendLedPanelMessage(LedPanel zigbee)
         {
-        //    await Clients.All.SendAsync("RecieveChange");
+            await Clients.All.SendAsync("ReceiveLedPanel", zigbee);
         }
+
+        public async Task NewVisitor(int visitorsCount)
+        {
+            await Clients.All.SendAsync("UpdateVisitorsCount", visitorsCount);
+        }
+
     }
 }
 

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Content Remove="wwwroot\Chart.cshtml.cs" />
+    <Content Remove="wwwroot\Hus.js" />
   </ItemGroup>
 
   <ItemGroup>

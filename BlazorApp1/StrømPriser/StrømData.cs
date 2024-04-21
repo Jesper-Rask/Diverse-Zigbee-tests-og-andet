@@ -22,9 +22,10 @@ namespace Strømpriser
 
     public class ShownPrice
     {
-        public DateOnly date { get; set; }
+        public DateTime date { get; set; }
         public TimeOnly time { get; set; }
         public double price{ get; set; }
+        public int pricePercent { get; set; }
         public string unit { get; set; }
         public string priceInString { get; set; }
     }

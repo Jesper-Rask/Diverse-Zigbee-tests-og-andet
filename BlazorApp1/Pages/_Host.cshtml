@@ -10,12 +10,12 @@
 <div id="components-reconnect-modal"></div> 
 
 <app>
-    @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+    @(await Html.RenderComponentAsync<App>(RenderMode.Server))
 </app>
 
 <!-- <component type="typeof(App)" render-mode="ServerPrerendered" />
     -->
 <script src="lib/Chart.js/chart.js"></script>
 <script src="~/MyChart.js"></script>
-<script src="~/Hus.js"></script>
-<link rel="stylesheet" href="EditorSyle.css">
+<link rel="stylesheet" href="EditorStyle.css">
+

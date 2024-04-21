@@ -12,6 +12,9 @@ namespace BlazorApp1
         public static readonly MQTTClient client = new ();
         public static event EventHandler <TempAndHumiSensor>? AirSensorEvent;
         public static event EventHandler<PIRSensorModel>? PirSensorEvent;
+        public static event EventHandler<RadiatorValve>? RadiatorValveEvent;
+        public static event EventHandler<LedPanel>? LedPanelEvent;
+
         public static void StartZigbee(this WebApplication app)
         {           
             client.MessageRecieved += ZigbeeDataRecieved;
@@ -37,7 +40,7 @@ namespace BlazorApp1
                 Console.WriteLine("Battery %:" + battery.battery);
             }
 
-            switch (zigbee)
+                        switch (zigbee)
             {
                 case Switch:
                     Switch sw = (Switch)zigbee;
@@ -76,27 +79,12 @@ namespace BlazorApp1
                     tempAndHumiSensorInList.linkquality = temp.linkquality;
                     tempAndHumiSensorInList.temperature = temp.temperature;
                     tempAndHumiSensorInList.voltage = temp.voltage;
+                    tempAndHumiSensorInList.battery = temp.battery;
                     tempAndHumiSensorInList.humidity = temp.humidity;
                     tempAndHumiSensorInList.TimeStamp=DateTime.Now;
 
                     AirSensorEvent?.Invoke(sender, tempAndHumiSensorInList);
 
-                    //switch (temp.Name)
-                    //{
-                    //    case "Sensor Soveværelse": Data.sensorSoveVærelse = temp; break;
-                    //    case "Sensor Stue": Data.sensorStue = temp; break;
-                    //    case "Sensor Vaskerum": Data.sensorVaskerum = temp; break;
-                    //    case "Sensor Julies Værelse": Data.sensorJuliesVærelse = temp; break;
-                    //    case "Sensor Kælder Værksted": Data.sensorKælderVærksted = temp; break;
-                    //    case "Sensor Køkken": Data.sensorKøkken = temp; break;
-                    //    case "Sensor Kontor": Data.sensorKontor = temp; break;
-                    //    case "Sensor Systue": Data.sensorSystue = temp; break;
-                    //    case "Sensor Bad": Data.sensorBad = temp; break;
-                    //    case "Sensor Kælder Bad": Data.sensorBadKælder = temp; break;
-                    //}
-
-
-               //     AirSensorEvent?.Invoke(sender, temp);
                     break;
                 case IkeaBulb:
                //     Data.pære = (IkeaBulb)zigbee;
@@ -114,12 +102,33 @@ namespace BlazorApp1
                             panel1.color_temp = panel.color_temp;
                             panel1.brightness = panel.brightness;
                             panel1.state = panel.state;
-
+                            LedPanelEvent?.Invoke(sender, panel1);
+                        }
+                    }
+                    break;
+                case RadiatorValve:
+                    RadiatorValve radiatorValve = (RadiatorValve)zigbee;
+                    foreach (ZigbeeDevice zigbeeDevice in Data.zigbeeDevices)
+                    {
+                        if (zigbeeDevice.Id == radiatorValve.Id && zigbeeDevice is RadiatorValve)
+                        {
+                            RadiatorValve valve = (RadiatorValve)zigbeeDevice;
+                            valve.TimeStamp = radiatorValve.TimeStamp;
+                            valve.battery = radiatorValve.battery;
+                            valve.child_lock = radiatorValve.child_lock;
+                            valve.current_heating_setpoint = radiatorValve.current_heating_setpoint;
+                            valve.linkquality = radiatorValve.linkquality;
+                            valve.local_temperature = radiatorValve.local_temperature;
+                            valve.position = radiatorValve.position;
+                            valve.voltage = radiatorValve.voltage;
+                            valve.window_detection = radiatorValve.window_detection;
+                            valve.system_mode = radiatorValve.system_mode;
+                            RadiatorValveEvent?.Invoke(sender, valve);
                         }
                     }
                     break;
 
-                }
+            }
             Console.WriteLine();
         }
         //private static void PIRSensorChange(bool occupancy)

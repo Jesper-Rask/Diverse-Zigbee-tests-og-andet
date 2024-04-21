@@ -1,0 +1,84 @@
+﻿.barContainer {
+    position: relative;
+    width: 30px;
+    height: 300px;
+}
+
+.bar {
+    border: 1px solid lightgrey;
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    overflow: hidden;
+    z-index:5;
+}
+
+.emptyBar {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    overflow: visible;
+    z-index:5;
+}
+
+.barGradient {
+    width: 30px;
+    height: 300px;
+    background-image: linear-gradient(to top, green, yellow, red);
+    position: absolute;
+    bottom: 0;
+}
+
+.zoom {
+    transform: scale(1.2);
+    transform-origin: bottom center;
+    transition: transform 0.2s ease;
+}
+
+@keyframes pulses {
+    0% { transform: scale(1);}
+    20% { transform: scale(1.1);}
+    100% { transform: scale(1);}
+}
+
+.pulse {
+    transform-origin: bottom center;
+    animation: pulses 1s infinite;
+}
+
+@keyframes showPrice {
+    0% {  transform: rotate(200deg) scale(0);}
+    70% { transform: rotate(-15deg) scale(1.2);}
+    100% {transform: rotate(0deg) scale(1);}
+}
+
+.prisAnimation {
+    animation-name: showPrice;
+    animation-duration: 0.6s;
+}
+
+.pris {
+    overflow: visible;
+    width: 160px;
+    position: absolute;
+    top: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: aliceblue;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pris::after {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 12px;
+    border-style: solid;
+    border-color: lightskyblue transparent transparent transparent;
+    border-radius: 5px;
+}
+

@@ -1,7 +1,34 @@
-﻿<AuthorizeView>
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.SignalR.Client
+@inject VisitorsService visitors
+
+
+
+
+<AuthorizeView>
     <NotAuthorized>
         @page "/"
-        <Login></Login>
-    </NotAuthorized>
+
+       <StrømPriser></StrømPriser>
+         <Login></Login>
+                 @visitorsCount
+ </NotAuthorized>
 </AuthorizeView>
+
+
+@code {
+    private int visitorsCount;
+    protected override void OnInitialized()
+    {
+        visitorsCount = StartZigbeeCommunication.db.IncreaseVisitorsCount().Result;
+    }
+}
+
+
+
+
+
+
+
+
 

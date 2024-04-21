@@ -8,8 +8,10 @@
         {
             _users = new()
             {
-                new UserAccount { UserName = "admin", Password = "admin", Role = "Administrator" },
-                new UserAccount { UserName = "user", Password = "user", Role = "User" }
+                new UserAccount { UserName = "jra", Password = "ask", Role = "Administrator" },
+                new UserAccount { UserName = "y", Password = "y", Role = "User" },
+                new UserAccount { UserName = "z", Password = "z", Role = "ReadOnly" },
+
             };
         }
         public UserAccount? GetByUserName(string userName)

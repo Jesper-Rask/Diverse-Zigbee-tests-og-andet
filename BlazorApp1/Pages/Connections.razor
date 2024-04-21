@@ -1,9 +1,20 @@
-﻿<AuthorizeView Roles = "Administrator">
+﻿
+
+<AuthorizeView Roles = "Administrator, ReadOnly">
 <Authorized>
+         
+
+
 
 @page "/Connections"
 @using BlazorApp1.ZigbeeModels
 @using static global::ZigbeeModels.ZigbeeDevice
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@if (readOnly){
+    <h7>readonly mode</h7>
+}
+<div class="@(readOnly ? "readonly" : "")">
+
 
 
 <h3>Bindinger</h3>
@@ -79,9 +90,17 @@
  </table>
 
 
-</Authorized>
-</AuthorizeView>
+ </div>
 
+ <style>
+    .readonly {
+        background-color: lightgray;
+        pointer-events: none;
+    }
+</style>
+
+ </Authorized>
+</AuthorizeView>
 
 @code {
     private string SelectedInput;
@@ -89,6 +108,13 @@
     private string SelectedEvent;
     private string SelectedCommand;
     private int Value;
+
+    public bool readOnly;
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        readOnly = authenticationState.User.IsInRole("ReadOnly");
+    }
 
     public void AddConnection()
     {
