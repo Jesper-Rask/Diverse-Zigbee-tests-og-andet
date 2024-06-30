@@ -88,6 +88,5 @@ namespace BlazorApp1
         {
             ikeaBulbEvent?.Invoke(sender, e);
         }
-
     }
 }

@@ -81,7 +81,8 @@ namespace MqttComm
             Data.connectors.Add(new Connector("Sensor Kælder Bad", EventNames.HumidityBelowLow, "Ventilator Kælder Bad", Commands.Turn_Off, 0));
 
             Data.connectors.Add(new Connector("PIR Sensor Carport", EventNames.MotionDetected, "IKEA Pære Carport", Commands.Turn_On, 0));
-            Data.connectors.Add(new Connector("PIR Sensor Carport", EventNames.MotionNotDetected, "IKEA Pære Carport", Commands.Turn_Off, 0));
+            Data.connectors.Add(new Connector("PIR Sensor Carport", EventNames.MotionDetected, "Timer 1", Commands.StartTimer, 300));
+            Data.connectors.Add(new Connector("Timer 1", EventNames.TimerElapsed, "IKEA Pære Carport", Commands.Turn_Off, 0))
         }
 
         private static void ZigbeeDevicesToList()

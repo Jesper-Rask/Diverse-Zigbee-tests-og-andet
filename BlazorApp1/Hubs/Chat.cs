@@ -28,10 +28,10 @@ namespace BlazorApp1.Hubs
             await Clients.All.SendAsync("ReceiveAirSensor", zigbee);
         }
 
-        //public async Task Send(IkeaBulb zigbee)
-        //{
-        //    await Clients.All.SendAsync("ReceiveAirSensor", zigbee);
-        //}
+        public async Task SendIkeaBulbMessage(IkeaBulb zigbee)
+        {
+            await Clients.All.SendAsync("ReceiveAirSensor", zigbee);
+        }
 
         public async Task SendPirSensorMessage(PIRSensorModel pirSensor)
         {

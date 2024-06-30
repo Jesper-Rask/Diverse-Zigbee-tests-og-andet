@@ -385,79 +385,67 @@
         data.radiatorValveEvent += NewRadiatorMessage;
         data.ledPanelEvent -= NewLedPanelMessage;
         data.ledPanelEvent += NewLedPanelMessage;
-        // data.ikeaBulbEvent -= NewIkeaBulbMessage;
-        // data.ikeaBulbEvent += NewIkeaBulbMessage;
+        data.ikeaBulbEvent -= NewIkeaBulbMessage;
+        data.ikeaBulbEvent += NewIkeaBulbMessage;
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
-            .Build();
+       //  hubConnection = new HubConnectionBuilder()
+       //      .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+       //      .Build();
 
-        // hubConnection.On<IkeaBulb>("ReceiveAirSensor", (message) =>
-        // {
-        //     InvokeAsync(StateHasChanged);
-        // });
-        hubConnection.On<TempAndHumiSensor>("ReceiveAirSensor", (message) =>
-        {
-             InvokeAsync(StateHasChanged);
-        });
+       //  hubConnection.On<IkeaBulb>("ReceiveIkeaBulb", (message) =>
+       //  {
+       //      InvokeAsync(StateHasChanged);
+       //  });
+       //  hubConnection.On<TempAndHumiSensor>("ReceiveAirSensor", (message) =>
+       //  {
+       //       InvokeAsync(StateHasChanged);
+       //  });
 
+       //  hubConnection.On<PIRSensorModel>("ReceivePirSensor", (message) =>
+       //  {
+       //      InvokeAsync(StateHasChanged);
+       //  });
+       //  hubConnection.On<LedPanel>("ReceiveLedPanel", (message) =>
+       //  {
+       //      InvokeAsync(StateHasChanged);
+       //  });
+       //  hubConnection.On<RadiatorValve>("ReceiveRadiatorValve", (message) =>
+       // {          
+       //     InvokeAsync(StateHasChanged);
+       // });
 
-        hubConnection.On<PIRSensorModel>("ReceivePirSensor", (message) =>
-        {
-            InvokeAsync(StateHasChanged);
-        });
-        hubConnection.On<LedPanel>("ReceiveLedPanel", (message) =>
-        {
-            InvokeAsync(StateHasChanged);
-        });
-        hubConnection.On<RadiatorValve>("ReceiveRadiatorValve", (message) =>
-       {          
-           InvokeAsync(StateHasChanged);
-       });
-
-        await hubConnection.StartAsync();
+       //  await hubConnection.StartAsync();
     }
 
 
     public void NewAirSensorMessage(object sender, TempAndHumiSensor zigbee)
     {
         AddToChart(zigbee);
-        if (hubConnection is not null)
-        {
-            hubConnection.SendAsync("SendAirSensorMessage", zigbee);
-        }
+        // if (hubConnection is not null)
+        // {
+        //     hubConnection.SendAsync("SendAirSensorMessage", zigbee);
+        // }
+        InvokeAsync(StateHasChanged);
     }
 
-    // public void NewIkeaBulbMessage(object sender, IkeaBulb zigbee)
-    // {
-    //     if (hubConnection is not null)
-    //     {
-    //         hubConnection.SendAsync("SendAirSensorMessage", zigbee);
-    //     }
-    // }
+    public void NewIkeaBulbMessage(object sender, IkeaBulb zigbee)
+    {
+        InvokeAsync(StateHasChanged);
+    }
 
     public void NewPirSensorMessage(object sender, PIRSensorModel zigbee)
     {
-        if (hubConnection is not null)
-        {
-            hubConnection.SendAsync("SendPirSensorMessage", zigbee);
-        }
+        InvokeAsync(StateHasChanged);
     }
 
     public void NewRadiatorMessage(object sender, RadiatorValve zigbee)
     {
-        if (hubConnection is not null)
-        {
-            hubConnection.SendAsync("SendRadiatorValveMessage", zigbee);
-        }
+        InvokeAsync(StateHasChanged);
     }
 
     public void NewLedPanelMessage(object sender, LedPanel zigbee)
     {
-        if (hubConnection is not null)
-        {
-            hubConnection.SendAsync("SendLedPanelMessage", zigbee);
-        }
+        InvokeAsync(StateHasChanged);
     }
 
 
