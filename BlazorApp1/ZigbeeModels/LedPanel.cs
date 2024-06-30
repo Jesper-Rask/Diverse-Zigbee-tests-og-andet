@@ -11,16 +11,8 @@ namespace BlazorApp1.ZigbeeModels
         private int _color_temp;
         public int color_temp { get { return _color_temp; } set { _color_temp=value; _colorTemp = value; ColorTemp = value; } }
         public int linkquality { get; set; }
-        private string _stateString;
-        public string state
-        {
-            get { return _stateString; }
-            set {
-                _stateString = value;
-                if (value == "ON") ;// _state = true; State = true;
-                if (value == "OFF") ;// _state = false; State = false;
-            }
-        }
+
+
         private int _brightnessProp;
         private int _colorTemp;
         private bool _state;
@@ -48,19 +40,23 @@ namespace BlazorApp1.ZigbeeModels
                 }
             }
         }
+
+        private bool booleanState = false;
+        public string state { get; set; }
         public bool State
         {
-            get { return _state; }
+            get { return state == "ON" ? true : false; }
             set
             {
-                if (value != _state)
+                if (value != booleanState)
                 {
-                    _state = value;
-                    if (_state) { TurnOn(); } else { TurnOff(); }
-                
+                    booleanState = value;
+                    if (booleanState) TurnOn();
+                    else TurnOff();
                 }
             }
         }
+
         public void Send(Commands cmd, int value = 0)
         {
             switch (cmd)
@@ -80,12 +76,13 @@ namespace BlazorApp1.ZigbeeModels
         private void TurnOn()
         {
             StartZigbeeCommunication.client.Publish("zigbee2mqtt/" + Id + "/set", "{\"state\": \"ON\"}");
-            //    SomethingChanged?.Invoke(this, EventArgs.Empty);
+            booleanState = true;
+            state = "ON";
         }
         private void TurnOff()
         {
             StartZigbeeCommunication.client.Publish("zigbee2mqtt/" + Id + "/set", "{\"state\": \"OFF\"}");
-            // SomethingChanged?.Invoke(this, EventArgs.Empty);
+            state = "OFF";
         }
         private void SetBrightness(int brightness)
         {

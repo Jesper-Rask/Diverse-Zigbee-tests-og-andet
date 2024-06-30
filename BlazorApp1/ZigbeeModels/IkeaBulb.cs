@@ -2,9 +2,9 @@
 {
     public class IkeaBulb : ZigbeeDevice
     {
-        private bool booleanState = false;
 
-        public string state { get; set; }
+
+
         public int brightness { get; set; }
 
         public void Send(Commands cmd, int value = 0)
@@ -32,6 +32,11 @@
             }
         }
 
+
+        #region On/Off
+
+        private bool booleanState = false;
+        public string state { get; set; }               
         public bool State
         {
             get { return state == "ON"? true : false; }
@@ -50,19 +55,18 @@
             StartZigbeeCommunication.client.Publish("zigbee2mqtt/" + Id + "/set", "{\"state\": \"ON\"}");
             booleanState = true;
             state = "ON";
-            //    SomethingChanged?.Invoke(this, EventArgs.Empty);
         }
         private void TurnOff()
         {
             StartZigbeeCommunication.client.Publish("zigbee2mqtt/" + Id + "/set", "{\"state\": \"OFF\"}");
             booleanState = false;
             state = "OFF";
-            // SomethingChanged?.Invoke(this, EventArgs.Empty);
         }
         private void Toggle()
         {
             if (booleanState) TurnOff(); else TurnOn();
         }
+        #endregion
 
         private void SetBrightness(int brightness)
         {
