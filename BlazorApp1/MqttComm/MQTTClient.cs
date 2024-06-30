@@ -129,14 +129,12 @@ namespace MqttComm
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 5", Id = "" });
             Data.zigbeeDevices.Add(new TonTimer { Name = "Timer 6", Id = "" });
 
-
             WeeklySchedule schedule = new();
 
             TimeOnly time1 = new TimeOnly(15, 21);
             TimeOnly time2 = new TimeOnly(15, 22);
             TimeOnly time3 = new TimeOnly(15, 23);
             TimeOnly time4 = new TimeOnly(15, 24);
-
 
             schedule.AddScheduleItem(DayOfWeek.Sunday, time1, true, 1);
             schedule.AddScheduleItem(DayOfWeek.Sunday, time2, true, 250);

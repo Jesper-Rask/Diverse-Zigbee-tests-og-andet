@@ -34,6 +34,7 @@
                     <th>Tænd / sluk</th>
                     <th>Lysstyrke</th>
                     <th>Farvetemperatur</th>
+                    <th>Signal</th>
                     <th>Tidsstempel</th>
                 </tr>
             </thead>
@@ -49,14 +50,21 @@
                             <td><ToggleButton @bind-Status="p.State" /></td>
                             <td><input @bind="p.Brightness" @bind:event="oninput" type="range" min="0" max="254" id="range" class="slider" step="1" /></td>
                             <td><input @bind="p.ColorTemp" @bind:event="oninput" type="range" min="160" max="450" id="range" class="slider" step="1" /></td>
+                            <td>@p.linkquality </td>
                             <td>@p.TimeStamp</td>
                             </tr>
                         }
                         else if (zigbee is IkeaBulb)
                         {
-                            IkeaBulb i = (IkeaBulb)zigbee;
+                            IkeaBulb bulb = (IkeaBulb)zigbee;
                             <tr>
-                                <td>@i.Name</td>
+                                <td>@bulb.Name</td>
+                                <td><ToggleButton @bind-Status="bulb.State" /></td>
+                                <td><input @bind="bulb.Brightness" @bind:event="oninput" type="range" min="0" max="254" id="range" class="slider" step="1" /></td>
+                                <td></td>
+                                <td>@bulb.linkquality</td>
+
+                                <td>@bulb.TimeStamp</td>
                             </tr>
                         }
                 }
@@ -253,12 +261,6 @@
     public string SelectedChart { get { return _selectedChart; } set { _selectedChart = value; LoadFromDB(value); } }
 
     private HubConnection hubConnection;
-    //private TempAndHumiSensor bedRoomSensor = Data.sensorSoveVærelse;
-    //private TempAndHumiSensor livingRoomSensor = Data.sensorStue;
-    //private TempAndHumiSensor juliesRoomSensor = Data.sensorJuliesVærelse;
-    //private TempAndHumiSensor washingRoomSensor = Data.sensorVaskerum;
-    //private TempAndHumiSensor workshopRoomSensor = Data.sensorKælderVærksted;
-    //private TempAndHumiSensor kitchenRoomSensor = Data.sensorKøkken;
 
     private PIRSensorModel pirSensor = Data.sensorPirSoveværelse;
     public List<double> tempList = new();
@@ -322,7 +324,6 @@
     }
 
 
-
     public void UpdateBrightness(object sender, EventArgs e)
     {
         if (hubConnection is not null)
@@ -384,52 +385,38 @@
         data.radiatorValveEvent += NewRadiatorMessage;
         data.ledPanelEvent -= NewLedPanelMessage;
         data.ledPanelEvent += NewLedPanelMessage;
-
+        // data.ikeaBulbEvent -= NewIkeaBulbMessage;
+        // data.ikeaBulbEvent += NewIkeaBulbMessage;
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<TempAndHumiSensor>("RecieveAirSensor", (message) =>
+        // hubConnection.On<IkeaBulb>("ReceiveAirSensor", (message) =>
+        // {
+        //     InvokeAsync(StateHasChanged);
+        // });
+        hubConnection.On<TempAndHumiSensor>("ReceiveAirSensor", (message) =>
         {
-            //switch (message.Name)
-            //{
-            //    case "Sensor Stue": livingRoomSensor = message; break;
-            //    case "Sensor Soveværelse": bedRoomSensor = message; break;
-            //    case "Sensor Julies Værelse": juliesRoomSensor = message; break;
-            //    case "Sensor Vaskerum": washingRoomSensor = message; break;
-            //    case "Sensor Kælder Værksted": workshopRoomSensor = message; break;
-            //    case "Sensor Køkken": kitchenRoomSensor = message; break;
-            //    default: break;
-            //}
-            InvokeAsync(StateHasChanged);
+             InvokeAsync(StateHasChanged);
         });
-        hubConnection.On<PIRSensorModel>("RecievePirSensor", (message) =>
-        {
-            pirSensor = message;
-            InvokeAsync(StateHasChanged);
-        });
-        //    hubConnection.On<int>("RecieveInt", (message) =>
-        //    {
-        //        _Brightness = message;
-        //        BrightnessPercent = message*100 / 254;
-        //        InvokeAsync(StateHasChanged);
-        //    });
 
+
+        hubConnection.On<PIRSensorModel>("ReceivePirSensor", (message) =>
+        {
+            InvokeAsync(StateHasChanged);
+        });
         hubConnection.On<LedPanel>("ReceiveLedPanel", (message) =>
         {
             InvokeAsync(StateHasChanged);
         });
-
         hubConnection.On<RadiatorValve>("ReceiveRadiatorValve", (message) =>
-       {
-           
+       {          
            InvokeAsync(StateHasChanged);
        });
 
         await hubConnection.StartAsync();
     }
-
 
 
     public void NewAirSensorMessage(object sender, TempAndHumiSensor zigbee)
@@ -440,6 +427,14 @@
             hubConnection.SendAsync("SendAirSensorMessage", zigbee);
         }
     }
+
+    // public void NewIkeaBulbMessage(object sender, IkeaBulb zigbee)
+    // {
+    //     if (hubConnection is not null)
+    //     {
+    //         hubConnection.SendAsync("SendAirSensorMessage", zigbee);
+    //     }
+    // }
 
     public void NewPirSensorMessage(object sender, PIRSensorModel zigbee)
     {
@@ -457,7 +452,7 @@
         }
     }
 
-     public void NewLedPanelMessage(object sender, LedPanel zigbee)
+    public void NewLedPanelMessage(object sender, LedPanel zigbee)
     {
         if (hubConnection is not null)
         {

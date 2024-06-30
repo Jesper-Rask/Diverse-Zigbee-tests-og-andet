@@ -23,13 +23,19 @@ namespace BlazorApp1.Hubs
             }
         }
 
-        public async Task SendAirSensorMessage(TempAndHumiSensor airSensor)
+        public async Task SendAirSensorMessage(TempAndHumiSensor zigbee)
         {
-            await Clients.All.SendAsync("RecieveAirSensor", airSensor);
+            await Clients.All.SendAsync("ReceiveAirSensor", zigbee);
         }
+
+        //public async Task Send(IkeaBulb zigbee)
+        //{
+        //    await Clients.All.SendAsync("ReceiveAirSensor", zigbee);
+        //}
+
         public async Task SendPirSensorMessage(PIRSensorModel pirSensor)
         {
-            await Clients.All.SendAsync("RecievePirSensor", pirSensor);
+            await Clients.All.SendAsync("ReceivePirSensor", pirSensor);
         }
 
         public async Task SendRadiatorValveMessage(RadiatorValve valve)
@@ -42,7 +48,7 @@ namespace BlazorApp1.Hubs
             if (!timer.Enabled)
             {
                 lastNumber = number;
-                await Clients.All.SendAsync("RecieveInt", number);
+      //          await Clients.All.SendAsync("RecieveInt", number);
                 timer.Enabled = true;
                 timer.Stop();
                 timer.Start();
@@ -57,8 +63,10 @@ namespace BlazorApp1.Hubs
 
         public async Task NewVisitor(int visitorsCount)
         {
-            await Clients.All.SendAsync("UpdateVisitorsCount", visitorsCount);
+    //        await Clients.All.SendAsync("UpdateVisitorsCount", visitorsCount);
         }
+                       
+
 
     }
 }

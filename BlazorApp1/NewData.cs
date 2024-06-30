@@ -16,6 +16,7 @@ namespace BlazorApp1
         PublishString publishString = new();
         PublishString lastPublishString=new();
         public event EventHandler<TempAndHumiSensor> airSensorEvent;
+        public event EventHandler<IkeaBulb> ikeaBulbEvent;
         public event EventHandler<PIRSensorModel> pirSensorEvent;
         public event EventHandler<RadiatorValve> radiatorValveEvent;
         public event EventHandler<LedPanel> ledPanelEvent;
@@ -46,6 +47,7 @@ namespace BlazorApp1
         public NewData()
         {
             StartZigbeeCommunication.AirSensorEvent += AirSensorEvent;
+            StartZigbeeCommunication.IkeaBulbEvent += IkeaBulbEvent;
             StartZigbeeCommunication.PirSensorEvent += PirSensorEvent;
             StartZigbeeCommunication.RadiatorValveEvent += RadiatorValveEvent;
             StartZigbeeCommunication.LedPanelEvent += LedPanelEvent;
@@ -80,6 +82,11 @@ namespace BlazorApp1
         private void AirSensorEvent(object sender, TempAndHumiSensor e)
         {
             airSensorEvent?.Invoke(sender, e);
+        }
+
+        private void IkeaBulbEvent(object sender, IkeaBulb e)
+        {
+            ikeaBulbEvent?.Invoke(sender, e);
         }
 
     }

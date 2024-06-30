@@ -6,6 +6,13 @@ namespace BlazorApp1.ZigbeeModels
     {
         public event EventHandler<int> TimerElapsed;
         private System.Timers.Timer timer = new();
+
+        public TonTimer()
+        {
+            timer.AutoReset = false;
+            timer.Elapsed += Timer_Elapsed;
+        }
+
         public void Send(Commands cmd, int value = 0)
         {
             switch (cmd)
@@ -25,10 +32,7 @@ namespace BlazorApp1.ZigbeeModels
         private void StartTimer(int seconds)
         {
             timer.Interval=seconds*1000;
-            timer.AutoReset = false;
-         
             timer.Start();
-            timer.Elapsed += Timer_Elapsed;
         }
 
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)

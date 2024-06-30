@@ -11,6 +11,7 @@ namespace BlazorApp1
 
         public static readonly MQTTClient client = new ();
         public static event EventHandler <TempAndHumiSensor>? AirSensorEvent;
+        public static event EventHandler<IkeaBulb>? IkeaBulbEvent;
         public static event EventHandler<PIRSensorModel>? PirSensorEvent;
         public static event EventHandler<RadiatorValve>? RadiatorValveEvent;
         public static event EventHandler<LedPanel>? LedPanelEvent;
@@ -68,6 +69,7 @@ namespace BlazorApp1
                     fugaTrykInList.battery = fugaTryk.battery;
                     fugaTrykInList.linkquality= fugaTryk.linkquality;
                     fugaTrykInList.voltage = fugaTryk.voltage;
+                    fugaTrykInList.TimeStamp = DateTime.Now;
                     Console.WriteLine("Action: " + fugaTryk.action);
                     fugaTrykInList.FugaTrykPressed();
                     break;
@@ -87,7 +89,14 @@ namespace BlazorApp1
 
                     break;
                 case IkeaBulb:
-               //     Data.pære = (IkeaBulb)zigbee;
+                    IkeaBulb pære = (IkeaBulb)zigbee;
+                    IkeaBulb pæreInList = (IkeaBulb)Data.zigbeeDevices.Find(x => x.Name == pære.Name);
+                    pæreInList.state = pære.state;
+                    pæreInList.brightness = pære.brightness;
+                    pæreInList.TimeStamp = pære.TimeStamp;
+                    pæreInList.linkquality = pære.linkquality;
+                    IkeaBulbEvent?.Invoke(sender, pæreInList);
+
                     break;
 
                 case LedPanel:
